@@ -21,6 +21,7 @@ program
   .option('-o, --organization <s>', 'Name of the organization')
   .option('-t, --token <s>', 'GitHub token')
   .option('-c, --count <n>', 'total no of top users')
+  .option('-e, --exclude <s>', 'exclude user/repo file path')
   .parse(process.argv);
 
 if (!process.argv.slice(2).length) {
@@ -28,7 +29,7 @@ if (!process.argv.slice(2).length) {
 }
 
 gh.authenticate(program.token);
-gh.getOrgContributors(program.organization, program.count)
+gh.getOrgContributors(program.organization, program.count, program.exclude)
   .then(contributors => {
     console.log(contributors);
   })

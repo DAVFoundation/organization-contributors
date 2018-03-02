@@ -1,4 +1,5 @@
 const octokit = require('@octokit/rest')()
+const { readFileSync } = require('fs');
 
 module.exports.authenticate = (token) => octokit.authenticate({
   type: 'token',
@@ -43,9 +44,10 @@ const getUserData = async (id) => {
   }
 }
 
-module.exports.getOrgContributors = async (owner, top) => {
+module.exports.getOrgContributors = async (owner, top, excludePath) => {
 
   var orgContributors = {}
+  const exclude = JSON.parse(readFileSync(excludePath, 'utf8'));
 
   const repos = await getRepos(owner)
 
@@ -67,17 +69,27 @@ module.exports.getOrgContributors = async (owner, top) => {
 
   // breakdown the dict and sort it by contribution
   var contributors = Object.keys(orgContributors).map(function (key) {
-    return { id: key, contrib_count: this[key]['contrib_count'], repos: this[key]['repos']  };
+    return { id: key, contrib_count: this[key]['contrib_count'], repos: this[key]['repos'] };
   }, orgContributors);
   contributors.sort(function (u1, u2) { return u2.contrib_count - u1.contrib_count; });
 
-  const filtered = contributors.slice(0, top);
-  const output = []
-  for (const contributor of filtered) {
-    // get user data
+  // filter by top count
+  const filtered_count = contributors.slice(0, parseInt(top) + parseInt(exclude.users.length));
+
+  // get user data
+  const userData = [];
+  for (const contributor of filtered_count) {
     let user = await getUserData(contributor.id);
-    output.push({ ...user, ...contributor });
+    userData.push({ ...user, ...contributor });
   }
 
-  return output;
+  // filter by exclude list 
+  const filtered_exclude = [];
+  for (const contributor of userData) {
+    if (!exclude.users.includes(contributor.user)) {
+      filtered_exclude.push(contributor);
+    }
+  }
+
+  return filtered_exclude;
 }
