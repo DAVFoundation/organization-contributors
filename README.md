@@ -1,5 +1,7 @@
 # organization-contributors
 
+[![license](https://img.shields.io/github/license/DAVFoundation/organization-contributors.svg?style=flat-square)](https://github.com/DAVFoundation/organization-contributors/blob/master/LICENSE)
+
 A command line tool for extracting the list of contributors across an entire Organization
 
 
@@ -36,3 +38,6 @@ Exclude list should be of this format...
   "repos": ["missions"]
 }
 ```
+
+
+
