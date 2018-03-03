@@ -38,5 +38,5 @@ Exclude list should be of this format...
 ```
 
 
-#License
+
 [![license](https://img.shields.io/github/license/DAVFoundation/n3m0.svg?style=flat-square)](https://github.com/DAVFoundation/n3m0/blob/master/LICENSE
