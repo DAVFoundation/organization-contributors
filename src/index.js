@@ -21,7 +21,7 @@ program
   .description(`${pkg.name} v${pkg.version} - ${pkg.description}`)
   .option('-o, --organization <s>', 'Name of the GitHub organization')
   .option('-t, --token <s>', 'GitHub token')
-  .option('-c, --count <n>', 'total no of top users')
+  .option('-c, --count <n>', 'maximum number of top users to return (defaults: 10)')
   .option('-e, --exclude <s>', 'exclude user/repo file path')
   .option('-w, --write <s>', 'write output to the .json file')
   .parse(process.argv);
@@ -31,7 +31,7 @@ if (!process.argv.slice(2).length) {
 }
 
 gh.authenticate(program.token);
-gh.getOrgContributors(program.organization, program.count, program.exclude)
+gh.getOrgContributors(program.organization, program.count || 10, program.exclude)
   .then(contributors => {
     if (program.write) {
       writeFile(program.write, JSON.stringify(contributors), 'utf8', () => console.log(`Output written to `, program.write));
