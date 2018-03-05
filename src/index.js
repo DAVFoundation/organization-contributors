@@ -26,7 +26,7 @@ program
   .option('-w, --write <path>', 'Write output to the .json file (optional)')
   .parse(process.argv);
 
-if (!process.argv.slice(2).length) {
+if (!process.argv.slice(2).length || !program.organization ) {
   program.help();
 }
 
