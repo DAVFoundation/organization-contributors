@@ -52,7 +52,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   const repos = await getRepos(owner)
 
   for (const repo of repos) {
-    const repoContributors = await getRepoContributors('davfoundation', repo)
+    const repoContributors = await getRepoContributors(owner, repo);
 
     for (const [userid, contrib_count] of Object.entries(repoContributors)) {
       if (userid in orgContributors) {
