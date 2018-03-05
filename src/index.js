@@ -30,7 +30,10 @@ if (!process.argv.slice(2).length || !program.organization ) {
   program.help();
 }
 
-gh.authenticate(program.token);
+if (program.token){
+  gh.authenticate(program.token);
+}
+
 gh.getOrgContributors(program.organization, program.count || 10, program.exclude)
   .then(contributors => {
     if (program.write) {
