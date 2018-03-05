@@ -52,6 +52,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   const repos = await getRepos(owner)
 
   for (const repo of repos) {
+    console.log('Getting contributors for', repo);
     const repoContributors = await getRepoContributors(owner, repo);
 
     for (const [userid, contrib_count] of Object.entries(repoContributors)) {
