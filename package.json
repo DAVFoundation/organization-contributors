@@ -1,7 +1,7 @@
 {
   "name": "organization-contributors",
   "version": "0.1.0",
-  "description": "Command line tool for extracting the list of contributors across an entire Organization",
+  "description": "Command line tool for extracting the list of contributors across an entire GitHub organization",
   "homepage": "https://github.com/DAVFoundation/organization-contributors#readme",
   "main": "index.js",
   "bin": {
