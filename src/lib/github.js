@@ -86,7 +86,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   // filter by exclude list
   const filtered_exclude = [];
   for (const contributor of userData) {
-    if (!exclude.users.includes(contributor.user)) {
+    if (!exclude.users || !exclude.users.includes(contributor.user)) {
       filtered_exclude.push(contributor);
     }
   }
