@@ -74,7 +74,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   contributors.sort(function (u1, u2) { return u2.contrib_count - u1.contrib_count; });
 
   // filter by top count
-  const filtered_count = contributors.slice(0, parseInt(top) + parseInt(exclude.users.length));
+  const filtered_count = contributors.slice(0, parseInt(top) + parseInt(exclude.users ? exclude.users.length : 0));
 
   // get user data
   const userData = [];
@@ -83,7 +83,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
     userData.push({ ...user, ...contributor });
   }
 
-  // filter by exclude list 
+  // filter by exclude list
   const filtered_exclude = [];
   for (const contributor of userData) {
     if (!exclude.users.includes(contributor.user)) {
