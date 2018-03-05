@@ -33,9 +33,11 @@ if (!process.argv.slice(2).length) {
 gh.authenticate(program.token);
 gh.getOrgContributors(program.organization, program.count, program.exclude)
   .then(contributors => {
-    writeFile(program.write, JSON.stringify(contributors), 'utf8', () => {
+    if (program.write) {
+      writeFile(program.write, JSON.stringify(contributors), 'utf8', () => console.log(`Output written to `, program.write));
+    } else {
       console.log(contributors);
-    });
+    }
   })
 
 console.log(`${pkg.name} v${pkg.version} - ${pkg.description}` + EOL);
