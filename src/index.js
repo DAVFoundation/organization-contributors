@@ -19,7 +19,7 @@ program.on('--help', () => {
 program
   .version(pkg.version)
   .description(`${pkg.name} v${pkg.version} - ${pkg.description}`)
-  .option('-o, --organization <s>', 'Name of the organization')
+  .option('-o, --organization <s>', 'Name of the GitHub organization')
   .option('-t, --token <s>', 'GitHub token')
   .option('-c, --count <n>', 'total no of top users')
   .option('-e, --exclude <s>', 'exclude user/repo file path')
