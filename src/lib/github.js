@@ -69,28 +69,27 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   }
 
   // breakdown the dict and sort it by contribution
-  var contributors = Object.keys(orgContributors).map(function (key) {
+  let contributors = Object.keys(orgContributors).map(function (key) {
     return { id: key, contrib_count: this[key]['contrib_count'], repos: this[key]['repos'] };
   }, orgContributors);
+
+  // sort by contribution count
   contributors.sort(function (u1, u2) { return u2.contrib_count - u1.contrib_count; });
 
-  // filter by top count
-  const filtered_count = contributors.slice(0, parseInt(top) + parseInt(exclude.users ? exclude.users.length : 0));
+  // slice contributors list to count + user exclude list length
+  contributors = contributors.slice(0, parseInt(top) + parseInt(exclude.users ? exclude.users.length : 0));
 
   // get user data
-  const userData = [];
-  for (const contributor of filtered_count) {
+  contributors = await Promise.all(contributors.map(async contributor => {
     let user = await getUserData(contributor.id);
-    userData.push({ ...user, ...contributor });
-  }
+    return { ...user, ...contributor };
+  }));
 
   // filter by exclude list
-  const filtered_exclude = [];
-  for (const contributor of userData) {
-    if (!exclude.users || !exclude.users.includes(contributor.user)) {
-      filtered_exclude.push(contributor);
-    }
-  }
+  contributors = contributors.filter(contributor => !exclude.users || !exclude.users.includes(contributor.user));
 
-  return filtered_exclude;
+  // Slice contributors to max count
+  contributors = contributors.slice(0, parseInt(top));
+
+  return contributors;
 }
