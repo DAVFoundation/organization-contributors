@@ -19,18 +19,21 @@ program.on('--help', () => {
 program
   .version(pkg.version)
   .description(`${pkg.name} v${pkg.version} - ${pkg.description}`)
-  .option('-o, --organization <s>', 'Name of the GitHub organization')
-  .option('-t, --token <s>', 'GitHub token')
-  .option('-c, --count <n>', 'maximum number of top users to return (defaults: 10)')
-  .option('-e, --exclude <s>', 'exclude user/repo file path')
-  .option('-w, --write <s>', 'write output to the .json file')
+  .option('-o, --organization <s>', 'Name of the GitHub organization (required)')
+  .option('-t, --token <s>', 'GitHub token (optional)')
+  .option('-c, --count <n>', 'Maximum number of top users to return (optional, defaults: 10)')
+  .option('-e, --exclude <path>', 'Exclude user/repo file path (optional)')
+  .option('-w, --write <path>', 'Write output to the .json file (optional)')
   .parse(process.argv);
 
-if (!process.argv.slice(2).length) {
+if (!process.argv.slice(2).length || !program.organization ) {
   program.help();
 }
 
-gh.authenticate(program.token);
+if (program.token){
+  gh.authenticate(program.token);
+}
+
 gh.getOrgContributors(program.organization, program.count || 10, program.exclude)
   .then(contributors => {
     if (program.write) {

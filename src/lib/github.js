@@ -6,7 +6,7 @@ module.exports.authenticate = (token) => octokit.authenticate({
   token,
 })
 
-const getRepos = async (org) => {
+const getRepos = async (org, exclude) => {
   let response = await octokit.repos.getForOrg({
     org: org,
     type: 'public',
@@ -16,7 +16,11 @@ const getRepos = async (org) => {
     response = await octokit.getNextPage(response)
     data = data.concat(response.data)
   }
-  return data.map(x => x.name)
+  repos = data.map(x => x.name)
+  if (exclude) {
+    repos = repos.filter(repo => exclude.indexOf(repo) < 0)
+  }
+  return repos
 }
 
 const getRepoContributors = async (owner, repo) => {
@@ -49,7 +53,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   var orgContributors = {}
   const exclude = JSON.parse(readFileSync(excludePath, 'utf8'));
 
-  const repos = await getRepos(owner)
+  const repos = await getRepos(owner, exclude.repos)
 
   for (const repo of repos) {
     console.log('Getting contributors for', repo);
