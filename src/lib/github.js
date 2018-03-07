@@ -6,7 +6,7 @@ checkRateLimits = (headers) => {
   if (headers['x-ratelimit-remaining'] == 0) {
     var time = moment.unix(headers['x-ratelimit-reset']).fromNow();
     console.log('Exaushted Github API requests.');
-    console.log(`Provide Github Token to get higher limits or check back in ${time}.`);
+    console.log(`Provide Github Token to get higher limits or check back ${time}.`);
     process.exit()
   }
 }
@@ -19,15 +19,15 @@ module.exports.authenticate = (token) => octokit.authenticate({
 const getRepos = async (org, exclude) => {
 
   try {
-  let response = await octokit.repos.getForOrg({
-    org: org,
-    type: 'public',
-  })
+    let response = await octokit.repos.getForOrg({
+      org: org,
+      type: 'public',
+    })
     var { data } = response;
-  while (octokit.hasNextPage(response)) {
-    response = await octokit.getNextPage(response)
-    data = data.concat(response.data)
-  }
+    while (octokit.hasNextPage(response)) {
+      response = await octokit.getNextPage(response)
+      data = data.concat(response.data)
+    }
   } catch (error) {
     if (error.code === 403) {
       checkRateLimits(error.headers);
@@ -44,15 +44,15 @@ const getRepos = async (org, exclude) => {
 const getRepoContributors = async (owner, repo) => {
   contributors = {}
   try {
-  let response = await octokit.repos.getContributors({
-    owner: owner,
-    repo: repo
-  })
+    let response = await octokit.repos.getContributors({
+      owner: owner,
+      repo: repo
+    })
     var { data } = response;
-  while (octokit.hasNextPage(response)) {
-    response = await octokit.getNextPage(response)
-    data = data.concat(response.data)
-  }
+    while (octokit.hasNextPage(response)) {
+      response = await octokit.getNextPage(response)
+      data = data.concat(response.data)
+    }
   } catch (error) {
     if (error.code === 403) {
       checkRateLimits(error.headers);
@@ -75,9 +75,9 @@ const getUserData = async (id) => {
 module.exports.getOrgContributors = async (owner, top, excludePath) => {
 
   var orgContributors = {}
-  if (excludePath){
+  if (excludePath) {
     exclude = JSON.parse(readFileSync(excludePath, 'utf8'));
-  }else{
+  } else {
     exclude = null;
   }
   const repos = await getRepos(owner, exclude)
