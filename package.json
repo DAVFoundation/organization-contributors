@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "description": "Command line tool for extracting the list of contributors across an entire GitHub organization",
   "homepage": "https://github.com/DAVFoundation/organization-contributors#readme",
+  "license": "MIT",
+  "author": "Tal Ater <tal@talater.com>",
   "main": "index.js",
   "bin": {
     "organization-contributors": "bin/organization-contributors.js"
@@ -11,17 +13,15 @@
     "start": "./bin/organization-contributors.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "license": "MIT",
-  "author": "Tal Ater <tal@talater.com>",
   "dependencies": {
-    "@octokit/rest": "^14.0.9",
+    "@octokit/rest": "^15.1.7",
     "commander": "^2.14.1",
     "moment": "^2.21.0",
     "update-notifier": "^2.3.0"
   },
   "devDependencies": {
-    "eslint": "^4.17.0",
-    "prettier": "^1.10.2"
+    "eslint": "^4.18.2",
+    "prettier": "^1.11.1"
   },
   "preferGlobal": true
 }
