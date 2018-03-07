@@ -17,9 +17,10 @@ const getRepos = async (org, exclude) => {
     data = data.concat(response.data)
   }
   repos = data.map(x => x.name)
-  if (exclude) {
-    repos = repos.filter(repo => exclude.indexOf(repo) < 0)
-  }
+
+  // filter by exclude list
+  repos = repos.filter(repo => !exclude || !exclude.repos.includes(repo));
+
   return repos
 }
 
@@ -51,9 +52,12 @@ const getUserData = async (id) => {
 module.exports.getOrgContributors = async (owner, top, excludePath) => {
 
   var orgContributors = {}
-  const exclude = JSON.parse(readFileSync(excludePath, 'utf8'));
-
-  const repos = await getRepos(owner, exclude.repos)
+  if (excludePath){
+    exclude = JSON.parse(readFileSync(excludePath, 'utf8'));
+  }else{
+    exclude = null;
+  }
+  const repos = await getRepos(owner, exclude)
 
   for (const repo of repos) {
     console.log('Getting contributors for', repo);
@@ -81,7 +85,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   contributors.sort(function (u1, u2) { return u2.contrib_count - u1.contrib_count; });
 
   // slice contributors list to count + user exclude list length
-  contributors = contributors.slice(0, parseInt(top) + parseInt(exclude.users ? exclude.users.length : 0));
+  contributors = contributors.slice(0, parseInt(top) + parseInt(exclude !== null ? exclude.users.length : 0));
 
   // get user data
   contributors = await Promise.all(contributors.map(async contributor => {
@@ -90,7 +94,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   }));
 
   // filter by exclude list
-  contributors = contributors.filter(contributor => !exclude.users || !exclude.users.includes(contributor.user));
+  contributors = contributors.filter(contributor => !exclude || !exclude.users.includes(contributor.user));
 
   // Slice contributors to max count
   contributors = contributors.slice(0, parseInt(top));
