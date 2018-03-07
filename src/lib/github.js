@@ -1,5 +1,15 @@
 const octokit = require('@octokit/rest')()
 const { readFileSync } = require('fs');
+const moment = require('moment');
+
+checkRateLimits = (headers) => {
+  if (headers['x-ratelimit-remaining'] == 0) {
+    var time = moment.unix(headers['x-ratelimit-reset']).fromNow();
+    console.log('Exaushted Github API requests.');
+    console.log(`Provide Github Token to get higher limits or check back in ${time}.`);
+    process.exit()
+  }
+}
 
 module.exports.authenticate = (token) => octokit.authenticate({
   type: 'token',
@@ -7,17 +17,24 @@ module.exports.authenticate = (token) => octokit.authenticate({
 })
 
 const getRepos = async (org, exclude) => {
+
+  try {
   let response = await octokit.repos.getForOrg({
     org: org,
     type: 'public',
   })
-  let { data } = response;
+    var { data } = response;
   while (octokit.hasNextPage(response)) {
     response = await octokit.getNextPage(response)
     data = data.concat(response.data)
   }
-  repos = data.map(x => x.name)
+  } catch (error) {
+    if (error.code === 403) {
+      checkRateLimits(error.headers);
+    }
+  }
 
+  repos = data.map(x => x.name)
   // filter by exclude list
   repos = repos.filter(repo => !exclude || !exclude.repos.includes(repo));
 
@@ -26,14 +43,20 @@ const getRepos = async (org, exclude) => {
 
 const getRepoContributors = async (owner, repo) => {
   contributors = {}
+  try {
   let response = await octokit.repos.getContributors({
     owner: owner,
     repo: repo
   })
-  let { data } = response;
+    var { data } = response;
   while (octokit.hasNextPage(response)) {
     response = await octokit.getNextPage(response)
     data = data.concat(response.data)
+  }
+  } catch (error) {
+    if (error.code === 403) {
+      checkRateLimits(error.headers);
+    }
   }
   data.map(x => contributors[x.id] = x.contributions);
   return contributors
