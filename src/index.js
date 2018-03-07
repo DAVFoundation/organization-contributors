@@ -32,6 +32,8 @@ if (!process.argv.slice(2).length || !program.organization ) {
 
 if (program.token){
   gh.authenticate(program.token);
+}else{
+  console.log('No github token provided. Making unauthenticated requests to Github API.');
 }
 
 gh.getOrgContributors(program.organization, program.count || 10, program.exclude || null)
