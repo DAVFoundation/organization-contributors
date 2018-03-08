@@ -1,6 +1,7 @@
 # organization-contributors
 
 [![license](https://img.shields.io/github/license/DAVFoundation/organization-contributors.svg?style=flat-square)](https://github.com/DAVFoundation/organization-contributors/blob/master/LICENSE)
+[![Gitter](https://img.shields.io/gitter/room/DAVFoundation/DAV-Contributors.svg?style=flat-square)](https://gitter.im/DAVFoundation/DAV-Contributors)
 
 A command line tool for extracting the list of contributors across an entire Organization
 
