@@ -1,12 +1,12 @@
 const octokit = require('@octokit/rest')()
 const { readFileSync } = require('fs');
-const moment = require('moment');
 
 checkRateLimits = (headers) => {
   if (headers['x-ratelimit-remaining'] == 0) {
-    var time = moment.unix(headers['x-ratelimit-reset']).fromNow();
+    var difference = new Date(headers['x-ratelimit-reset'] * 1000) - new Date();
+    var minutes = Math.floor((difference / 1000) / 60);
     console.log('Exaushted Github API requests.');
-    console.log(`Provide Github Token to get higher limits or check back ${time}.`);
+    console.log(`Provide Github Token to get higher limits or check back in ${minutes} ${minutes > 1 ? 'minutes' : 'minute'}.`);
     process.exit()
   }
 }
