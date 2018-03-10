@@ -16,7 +16,6 @@
   "dependencies": {
     "@octokit/rest": "^14.0.9",
     "commander": "^2.14.1",
-    "moment": "^2.21.0",
     "update-notifier": "^2.3.0"
   },
   "devDependencies": {
