@@ -3,8 +3,8 @@ const { readFileSync } = require('fs');
 
 checkRateLimits = (headers) => {
   if (headers['x-ratelimit-remaining'] == 0) {
-    var difference = new Date(headers['x-ratelimit-reset'] * 1000) - new Date();
-    var minutes = Math.floor((difference / 1000) / 60);
+    const difference = new Date(headers['x-ratelimit-reset'] * 1000) - new Date();
+    const minutes = Math.floor((difference / 1000) / 60);
     console.log('Exaushted Github API requests.');
     console.log(`Provide Github Token to get higher limits or check back in ${minutes} ${minutes > 1 ? 'minutes' : 'minute'}.`);
     process.exit()
