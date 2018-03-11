@@ -45,4 +45,4 @@ gh.getOrgContributors(program.organization, program.count || 10, program.exclude
     }
   })
 
-console.log(`${pkg.name} v${pkg.version} - ${pkg.description}` + EOL);
+console.log(`${EOL} ${pkg.name} v${pkg.version} - ${pkg.description} ${EOL}`);
