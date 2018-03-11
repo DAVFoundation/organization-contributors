@@ -6,7 +6,8 @@ checkRateLimits = (headers) => {
     const difference = new Date(headers['x-ratelimit-reset'] * 1000) - new Date();
     const minutes = Math.floor((difference / 1000) / 60);
     console.log('Exaushted Github API requests.');
-    console.log(`Provide Github Token to get higher limits or check back in ${minutes} ${minutes > 1 ? 'minutes' : 'minute'}.`);
+    console.log('Please, provide Github Token to get higher limits.');
+    console.log(`Or check back in ${minutes} ${minutes > 1 ? 'minutes' : 'minute'}.`);
     process.exit()
   }
 }
