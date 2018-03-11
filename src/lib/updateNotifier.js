@@ -1,8 +1,9 @@
 const updateNotifier = require('update-notifier');
 const pkg = require('../../package.json');
+const intervalValue = require('./config');
 
 const notifier = updateNotifier({
   pkg,
-  updateCheckInterval: 86400000, // 1 day
+  updateCheckInterval: intervalValue,
 });
 notifier.notify();

@@ -30,8 +30,10 @@ if (!process.argv.slice(2).length || !program.organization ) {
   program.help();
 }
 
-if (program.token){
-  gh.authenticate(program.token);
+var token = process.token || process.env.GIT_TOKEN;
+
+if (token){
+  gh.authenticate(token);
 }else{
   console.log('No github token provided. Making unauthenticated requests to Github API.');
 }
@@ -45,4 +47,4 @@ gh.getOrgContributors(program.organization, program.count || 10, program.exclude
     }
   })
 
-console.log(`${pkg.name} v${pkg.version} - ${pkg.description}` + EOL);
+console.log(`${EOL} ${pkg.name} v${pkg.version} - ${pkg.description} ${EOL}`);
