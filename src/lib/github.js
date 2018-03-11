@@ -91,10 +91,11 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
         orgContributors[userid]['contrib_count'] += contrib_count
         orgContributors[userid]['repos'].push(repo)
       } else {
-        orgContributors[userid] = {};
-        orgContributors[userid]['contrib_count'] = contrib_count;
-        orgContributors[userid]['repos'] = [];
-        orgContributors[userid]['repos'].push(repo);
+        orgContributors[userid] = {
+        'contrib_count' = contrib_count;
+        'repos' : [repo],
+      };
+  
       }
     }
   }
