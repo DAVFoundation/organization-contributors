@@ -30,8 +30,10 @@ if (!process.argv.slice(2).length || !program.organization ) {
   program.help();
 }
 
-if (program.token){
-  gh.authenticate(program.token);
+var token = process.token || process.env.GIT_TOKEN;
+
+if (token){
+  gh.authenticate(token);
 }else{
   console.log('No github token provided. Making unauthenticated requests to Github API.');
 }
