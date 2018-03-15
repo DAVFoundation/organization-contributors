@@ -32,6 +32,9 @@ const getRepos = async (org, exclude) => {
   } catch (error) {
     if (error.code === 403) {
       checkRateLimits(error.headers);
+    }else{
+      console.log(`Request failed with error: ${error.status}`);
+      process.exit();
     }
   }
 
@@ -57,6 +60,9 @@ const getRepoContributors = async (owner, repo) => {
   } catch (error) {
     if (error.code === 403) {
       checkRateLimits(error.headers);
+    }else{
+      console.log(`Request failed with error: ${error.status}`);
+      process.exit();
     }
   }
   data.map(x => contributors[x.id] = x.contributions);
