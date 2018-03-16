@@ -2,7 +2,7 @@ const program = require('commander');
 require('./lib/updateNotifier');
 const { EOL } = require('os');
 var pkg = require('../package.json');
-var conifg = require('./lib/config');
+var config = require('./lib/config');
 var gh = require('./lib/github');
 var { writeFile } = require('fs');
 
@@ -12,7 +12,13 @@ program.on('--help', () => {
 
   $ ${
     pkg.name
-  } -o davfoundation -t "abcdef" -c 10 -e exclude.json -w output.json
+  } -o davfoundation -t "abcdef" -c 400 -e exclude.json -w output.json
+  $ ${
+    pkg.name
+  } -o davfoundation [-t "abcdef"] -e exclude.json -w output.json
+  $ ${
+    pkg.name
+  } -o davfoundation -t "abcdef" -w output.json
 
   Find out more at ${pkg.homepage}${EOL}`);
 });
