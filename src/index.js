@@ -15,10 +15,10 @@ program.on('--help', () => {
   } -o davfoundation -t "abcdef" -c 400 -e exclude.json -w output.json
   $ ${
     pkg.name
-  } -o davfoundation [-t "abcdef"] -e exclude.json -w output.json
+  } -o davfoundation -e exclude.json -w output.json
   $ ${
     pkg.name
-  } -o davfoundation -t "abcdef" -w output.json
+  } -o davfoundation -t "opqrts" -w output.json
 
   Find out more at ${pkg.homepage}${EOL}`);
 });
