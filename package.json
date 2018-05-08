@@ -14,13 +14,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@octokit/rest": "^15.2.5",
+    "@octokit/rest": "^15.4.0",
     "commander": "^2.15.1",
-    "update-notifier": "^2.3.0"
+    "update-notifier": "^2.5.0"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
-    "prettier": "^1.11.1"
+    "prettier": "^1.12.1"
   },
   "preferGlobal": true
 }
