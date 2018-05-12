@@ -72,6 +72,8 @@ const getRepoContributors = async (owner, repo) => {
 };
 
 const getUserData = async id => {
+
+  try {
   let { data } = await octokit.users.getById({ id });
   return {
     user: data.login,
@@ -79,6 +81,10 @@ const getUserData = async id => {
     avatar: data.avatar_url,
     bio: data.bio,
   };
+  } catch (error) {
+    console.log(`Request failed with error: ${error.status}`);
+    return;
+  }
 };
 
 module.exports.getOrgContributors = async (owner, top, excludePath) => {
