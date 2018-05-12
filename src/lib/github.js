@@ -89,6 +89,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
     var exclude = null;
   }
   const repos = await getRepos(owner, exclude);
+  console.log(`Found ${repos.length} public repos.`);
 
   for (const repo of repos) {
     console.log(`Getting contributors for ${repo}`);
