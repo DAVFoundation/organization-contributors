@@ -44,7 +44,7 @@ const getRepos = async (org, exclude) => {
   // filter by exclude list
   repos = repos.filter(repo => !exclude || !exclude.repos.includes(repo));
 
-  return repos;
+  return repos.sort();
 };
 
 const getRepoContributors = async (owner, repo) => {
