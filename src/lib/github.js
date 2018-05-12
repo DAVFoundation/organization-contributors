@@ -134,6 +134,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
     parseInt(top) + parseInt(exclude !== null ? exclude.users.length : 0)
   );
 
+  console.log(`Getting information for ${contributors.length} contributors.`);
   // get user data
   contributors = await Promise.all(
     contributors.map(async contributor => {
