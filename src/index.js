@@ -61,6 +61,7 @@ gh
     program.exclude || null
   )
   .then(contributors => {
+    process.stdout.clearLine();
     if (program.write) {
       writeFile(program.write, JSON.stringify(contributors), 'utf8', () =>
         console.log(`Output written to ${program.write}${EOL}`)

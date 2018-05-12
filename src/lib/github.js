@@ -74,13 +74,14 @@ const getRepoContributors = async (owner, repo) => {
 const getUserData = async id => {
 
   try {
-  let { data } = await octokit.users.getById({ id });
-  return {
-    user: data.login,
-    name: data.name,
-    avatar: data.avatar_url,
-    bio: data.bio,
-  };
+    let { data } = await octokit.users.getById({ id });
+    process.stdout.write(`Getting info for user... ${data.login}           \r`);
+    return {
+      user: data.login,
+      name: data.name,
+      avatar: data.avatar_url,
+      bio: data.bio,
+    };
   } catch (error) {
     console.log(`Request failed with error: ${error.status}`);
     return;
