@@ -37,7 +37,7 @@ program
     'Maximum number of top users to return (optional, defaults: 10)'
   )
   .option('-e, --exclude <path>', 'Exclude user/repo file path (optional)')
-  .option('-w, --write <path>', 'Write output to the .json file (optional)')
+  .option('-w, --write <path>', 'Write output to the .json file (optional, defaults: terminal)')
   .parse(process.argv);
 
 if (!process.argv.slice(2).length || !program.organization) {
@@ -61,6 +61,7 @@ gh
     program.exclude || null
   )
   .then(contributors => {
+    process.stdout.clearLine();
     if (program.write) {
       writeFile(program.write, JSON.stringify(contributors), 'utf8', () =>
         console.log(`Output written to ${program.write}${EOL}`)

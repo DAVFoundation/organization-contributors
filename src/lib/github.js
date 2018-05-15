@@ -44,7 +44,7 @@ const getRepos = async (org, exclude) => {
   // filter by exclude list
   repos = repos.filter(repo => !exclude || !exclude.repos.includes(repo));
 
-  return repos;
+  return repos.sort();
 };
 
 const getRepoContributors = async (owner, repo) => {
@@ -72,13 +72,20 @@ const getRepoContributors = async (owner, repo) => {
 };
 
 const getUserData = async id => {
-  let { data } = await octokit.users.getById({ id });
-  return {
-    user: data.login,
-    name: data.name,
-    avatar: data.avatar_url,
-    bio: data.bio,
-  };
+
+  try {
+    let { data } = await octokit.users.getById({ id });
+    process.stdout.write(`Getting info for user... ${data.login}           \r`);
+    return {
+      user: data.login,
+      name: data.name,
+      avatar: data.avatar_url,
+      bio: data.bio,
+    };
+  } catch (error) {
+    console.log(`Request failed with error: ${error.status}`);
+    return;
+  }
 };
 
 module.exports.getOrgContributors = async (owner, top, excludePath) => {
@@ -89,6 +96,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
     var exclude = null;
   }
   const repos = await getRepos(owner, exclude);
+  console.log(`Found ${repos.length} public repos.`);
 
   for (const repo of repos) {
     console.log(`Getting contributors for ${repo}`);
@@ -127,6 +135,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
     parseInt(top) + parseInt(exclude !== null ? exclude.users.length : 0)
   );
 
+  console.log(`Getting information for ${contributors.length} contributors.`);
   // get user data
   contributors = await Promise.all(
     contributors.map(async contributor => {
