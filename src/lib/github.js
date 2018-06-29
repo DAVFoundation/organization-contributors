@@ -1,126 +1,161 @@
-const octokit = require('@octokit/rest')()
+const octokit = require('@octokit/rest')();
 const { readFileSync } = require('fs');
+const { EOL } = require('fs');
 
-checkRateLimits = (headers) => {
+const checkRateLimits = headers => {
   if (headers['x-ratelimit-remaining'] == 0) {
     const difference = new Date(headers['x-ratelimit-reset'] * 1000) - new Date();
     const minutes = Math.floor((difference / 1000) / 60);
     console.log('Exaushted Github API requests.');
     console.log(`Provide Github Token to get higher limits or check back in ${minutes} ${minutes > 1 ? 'minutes' : 'minute'}.`);
-    process.exit()
+    process.exit();
+    const difference =
+      new Date(headers['x-ratelimit-reset'] * 1000) - new Date();
+    const minutes = Math.floor(difference / 1000 / 60);
+    console.log(`Exaushted Github API requests.
+    Please, provide Github Token to get higher limits.');
+    Or check back in ${minutes} ${minutes > 1 ? 'minutes' : 'minute'}.${EOL}`);
+    process.exit();
   }
-}
+};
 
-module.exports.authenticate = (token) => octokit.authenticate({
-  type: 'token',
-  token,
-})
+module.exports.authenticate = token =>
+  octokit.authenticate({
+    type: 'token',
+    token,
+  });
 
 const getRepos = async (org, exclude) => {
-
   try {
     let response = await octokit.repos.getForOrg({
       org: org,
       type: 'public',
-    })
+    });
     var { data } = response;
     while (octokit.hasNextPage(response)) {
-      response = await octokit.getNextPage(response)
-      data = data.concat(response.data)
+      response = await octokit.getNextPage(response);
+      data = data.concat(response.data);
     }
   } catch (error) {
     if (error.code === 403) {
       checkRateLimits(error.headers);
+    } else {
+      console.log(`Request failed with error: ${error.status}${EOL}`);
+      process.exit();
     }
   }
 
-  repos = data.map(x => x.name)
+  repos = data.map(x => x.name);
   // filter by exclude list
   repos = repos.filter(repo => !exclude || !exclude.repos.includes(repo));
 
-  return repos
-}
+  return repos.sort();
+};
 
 const getRepoContributors = async (owner, repo) => {
-  contributors = {}
+  let contributors = {};
   try {
     let response = await octokit.repos.getContributors({
       owner: owner,
-      repo: repo
-    })
+      repo: repo,
+    });
     var { data } = response;
     while (octokit.hasNextPage(response)) {
-      response = await octokit.getNextPage(response)
-      data = data.concat(response.data)
+      response = await octokit.getNextPage(response);
+      data = data.concat(response.data);
     }
   } catch (error) {
     if (error.code === 403) {
       checkRateLimits(error.headers);
+    } else {
+      console.log(`Request failed with error: ${error.status}${EOL}`);
+      process.exit();
     }
   }
-  data.map(x => contributors[x.id] = x.contributions);
-  return contributors
-}
+  data.map(x => (contributors[x.id] = x.contributions));
+  return contributors;
+};
 
-const getUserData = async (id) => {
-  let { data } = await octokit.users.getById({ id });
-  return {
-    'user': data.login,
-    'name': data.name,
-    'avatar': data.avatar_url,
-    'bio': data.bio
+const getUserData = async id => {
+
+  try {
+    let { data } = await octokit.users.getById({ id });
+    process.stdout.write(`Getting info for user... ${data.login}           \r`);
+    return {
+      user: data.login,
+      name: data.name,
+      avatar: data.avatar_url,
+      bio: data.bio,
+    };
+  } catch (error) {
+    console.log(`Request failed with error: ${error.status}`);
+    return;
   }
-}
+};
 
 module.exports.getOrgContributors = async (owner, top, excludePath) => {
-
-  var orgContributors = {}
+  var orgContributors = {};
   if (excludePath) {
-    exclude = JSON.parse(readFileSync(excludePath, 'utf8'));
+    var exclude = JSON.parse(readFileSync(excludePath, 'utf8'));
   } else {
-    exclude = null;
+    var exclude = null;
   }
-  const repos = await getRepos(owner, exclude)
+  const repos = await getRepos(owner, exclude);
+  console.log(`Found ${repos.length} public repos.`);
 
   for (const repo of repos) {
-    console.log('Getting contributors for', repo);
+    console.log(`Getting contributors for ${repo}`);
     const repoContributors = await getRepoContributors(owner, repo);
 
     for (const [userid, contrib_count] of Object.entries(repoContributors)) {
       if (userid in orgContributors) {
-        orgContributors[userid]['contrib_count'] += contrib_count
-        orgContributors[userid]['repos'].push(repo)
-      } else {
-        orgContributors[userid] = {};
-        orgContributors[userid]['contrib_count'] = contrib_count;
-        orgContributors[userid]['repos'] = [];
+        orgContributors[userid]['contrib_count'] += contrib_count;
         orgContributors[userid]['repos'].push(repo);
+      } else {
+        orgContributors[userid] = {
+          contrib_count: contrib_count,
+          repos: [repo],
+        };
       }
     }
   }
 
   // breakdown the dict and sort it by contribution
-  let contributors = Object.keys(orgContributors).map(function (key) {
-    return { id: key, contrib_count: this[key]['contrib_count'], repos: this[key]['repos'] };
+  let contributors = Object.keys(orgContributors).map(function(key) {
+    return {
+      id: key,
+      contrib_count: this[key]['contrib_count'],
+      repos: this[key]['repos'],
+    };
   }, orgContributors);
 
   // sort by contribution count
-  contributors.sort(function (u1, u2) { return u2.contrib_count - u1.contrib_count; });
+  contributors.sort(function(u1, u2) {
+    return u2.contrib_count - u1.contrib_count;
+  });
 
   // slice contributors list to count + user exclude list length
-  contributors = contributors.slice(0, parseInt(top) + parseInt(exclude !== null ? exclude.users.length : 0));
+  contributors = contributors.slice(
+    0,
+    parseInt(top) + parseInt(exclude !== null ? exclude.users.length : 0)
+  );
 
+  console.log(`Getting information for ${contributors.length} contributors.`);
   // get user data
-  contributors = await Promise.all(contributors.map(async contributor => {
-    let user = await getUserData(contributor.id);
-    return { ...user, ...contributor };
-  }));
+  contributors = await Promise.all(
+    contributors.map(async contributor => {
+      let user = await getUserData(contributor.id);
+      return { ...user, ...contributor };
+    })
+  );
 
   // filter by exclude list
-  contributors = contributors.filter(contributor => !exclude || !exclude.users.includes(contributor.user));
+  contributors = contributors.filter(
+    contributor => !exclude || !exclude.users.includes(contributor.user)
+  );
 
   // Slice contributors to max count
   contributors = contributors.slice(0, parseInt(top));
 
   return contributors;
-}
+};
