@@ -35,7 +35,9 @@ const getRepos = async (org, exclude) => {
     if (error.code === 403) {
       checkRateLimits(error.headers);
     } else {
-      console.log(`Request failed with error: ${error.status}${EOL}`);
+      console.log(
+        `getRepos(${org}) request failed with error: ${error.status}${EOL}`
+      );
       process.exit();
     }
   }
@@ -63,7 +65,11 @@ const getRepoContributors = async (owner, repo) => {
     if (error.code === 403) {
       checkRateLimits(error.headers);
     } else {
-      console.log(`Request failed with error: ${error.status}${EOL}`);
+      console.log(
+        `getRepoContributors(${owner}, ${repo}) request failed with error: ${
+          error.status
+        }${EOL}`
+      );
       process.exit();
     }
   }
@@ -82,7 +88,9 @@ const getUserData = async id => {
       bio: data.bio,
     };
   } catch (error) {
-    console.log(`Request failed with error: ${error.status}`);
+    console.log(
+      `getUserData(${id}) request failed with error: ${error.status}`
+    );
     return;
   }
 };
@@ -131,7 +139,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   // slice contributors list to count + user exclude list length
   contributors = contributors.slice(
     0,
-    parseInt(top) + parseInt(exclude !== null ? exclude.users.length : 0),
+    parseInt(top) + parseInt(exclude !== null ? exclude.users.length : 0)
   );
 
   console.log(`Getting information for ${contributors.length} contributors.`);
@@ -140,12 +148,12 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
     contributors.map(async contributor => {
       let user = await getUserData(contributor.id);
       return { ...user, ...contributor };
-    }),
+    })
   );
 
   // filter by exclude list
   contributors = contributors.filter(
-    contributor => !exclude || !exclude.users.includes(contributor.user),
+    contributor => !exclude || !exclude.users.includes(contributor.user)
   );
 
   // Slice contributors to max count
