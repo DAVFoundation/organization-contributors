@@ -1,5 +1,5 @@
 const config = {
-  github_token : process.env.GITHUB_TOKEN,
+  github_token: process.env.GITHUB_TOKEN,
   intervalValue: 86400000, // 1 day
 };
 

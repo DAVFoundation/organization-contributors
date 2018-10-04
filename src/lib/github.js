@@ -72,7 +72,6 @@ const getRepoContributors = async (owner, repo) => {
 };
 
 const getUserData = async id => {
-
   try {
     let { data } = await octokit.users.getById({ id });
     process.stdout.write(`Getting info for user... ${data.login}           \r`);
@@ -132,7 +131,7 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
   // slice contributors list to count + user exclude list length
   contributors = contributors.slice(
     0,
-    parseInt(top) + parseInt(exclude !== null ? exclude.users.length : 0)
+    parseInt(top) + parseInt(exclude !== null ? exclude.users.length : 0),
   );
 
   console.log(`Getting information for ${contributors.length} contributors.`);
@@ -141,12 +140,12 @@ module.exports.getOrgContributors = async (owner, top, excludePath) => {
     contributors.map(async contributor => {
       let user = await getUserData(contributor.id);
       return { ...user, ...contributor };
-    })
+    }),
   );
 
   // filter by exclude list
   contributors = contributors.filter(
-    contributor => !exclude || !exclude.users.includes(contributor.user)
+    contributor => !exclude || !exclude.users.includes(contributor.user),
   );
 
   // Slice contributors to max count
